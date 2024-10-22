@@ -8,7 +8,7 @@ Este projeto é uma implementação de uma aplicação de adivinhação de núme
 
 O projeto é organizado nos seguintes componentes principais:
 
-1. **Backend (Python + Flask):**
+1. Backend (Python + Flask):
    - Implementa a lógica do jogo de adivinhação.
    - Se conecta ao banco de dados Postgres para salvar os dados do jogo.
    - *Dockerfile do Backend Python:* configura o ambiente necessário.
