@@ -1,18 +1,15 @@
-# Usar uma imagem oficial do Node.js para construir o frontend
-FROM node:14
+# Fase de construção
+FROM node:14 AS build
 
-# Definir o diretório de trabalho
 WORKDIR /app
-
-# Copiar os arquivos do projeto
-COPY . .
-
-# Instalar as dependências do React
+COPY package.json package-lock.json ./
 RUN npm install
-
-# Construir o frontend
+COPY . ./
 RUN npm run build
 
-# Usar o NGINX para servir o frontend
+# Servindo o build com NGINX
 FROM nginx:alpine
-COPY --from=0 /app/build /usr/share/nginx/html
+COPY --from=build /app/build /usr/share/nginx/html
+RUN chown -R nginx:nginx /usr/share/nginx/html  # Ajusta as permissões para o NGINX
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

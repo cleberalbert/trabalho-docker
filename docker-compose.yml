@@ -1,40 +1,52 @@
-version: '3'
+version: '3.8'
+
 services:
-  backend1:
-    build: ./backend
-    container_name: backend1
-    ports:
-      - "5001:5000"
-    restart: always
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/app
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/guess_game
+    restart: unless-stopped
+    expose:
+      - "5000"
+    depends_on:
+      - db  # Garante que o backend depende do db estar disponível
 
-  backend2:
-    build: ./backend
-    container_name: backend2
-    ports:
-      - "5002:5000"
-    restart: always
-
-  postgres:
+  db:
     image: postgres:13
-    container_name: db
+    volumes:
+      - db_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: game_db
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: always
+      POSTGRES_DB: guess_game
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - backend
+      - db  # Certifica-se que o backend e o banco de dados estão prontos antes de iniciar o frontend
+    expose:
+      - "80"
 
   nginx:
-    image: nginx:alpine
-    container_name: nginx
+    image: nginx:latest
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./frontend/build:/usr/share/nginx/html
     ports:
-      - "80:80"
+      - "8082:80"
     depends_on:
-      - backend1
-      - backend2
+      - backend
+      - db
+    restart: unless-stopped
 
 volumes:
-  postgres_data:
+  db_data:
