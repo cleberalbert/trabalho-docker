@@ -1,5 +1,3 @@
-
-```markdown
 # Projeto Guess Game com Docker Compose
 
 Este projeto é uma implementação de uma aplicação de adivinhação de números, usando Docker Compose para orquestrar seus componentes. A aplicação é composta por um backend em Python com Flask, um frontend em React, um banco de dados Postgres e um servidor NGINX como proxy reverso e balanceador de carga.
@@ -40,6 +38,7 @@ Clone o repositório do jogo de adivinhação no GitHub:
 ```bash
 git clone https://github.com/fams/guess_game.git
 cd guess_game
+
 ```
 
 ### Passo 2: Construir e Iniciar os Serviços
